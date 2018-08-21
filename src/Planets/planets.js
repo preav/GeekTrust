@@ -51,25 +51,58 @@ export default class Planets extends Component{
 					'speed': '10 megamiles/hour'
 				}
 			],
-			selectedPlanet:'Bye',
-			selectedRocket:[]
+			selectedPlanet:'DonLon',
+			selectedRocket:'Space Pod',
+			calculatedTime: 0
 		}
 	}
-	selectPlanet() {
-		this.setState({selectedPlanet: document.getElementById('planets').value});
-		console.log(this.state.selectedPlanet);
+	selectPlanet = (event) => {
+		this.setState({selectedPlanet: event.target.value});
+		this.calculateTime();
+	}
+
+	selectRocket = (event) => {
+		this.setState({selectedRocket: event.target.value});
+		this.calculateTime();
+	}
+
+	calculateTime = () => {
+		console.log('called')
+		let planet = this.state.selectedPlanet;
+		let rocket = this.state.selectedRocket;
+		let distanceBetweenPlanets = this.state.planets.map( planetName => {if(planetName === planet){
+					return planetName.distance;
+				}})
+		let max_distance = this.state.vehicles.map( rocketName => {if(rocketName === rocket){
+					return rocketName.max_distance;
+				}})
+		let speed = this.state.vehicles.map( rocketName => {if(rocketName === rocket){
+					return rocketName.speed;
+				}})
+		if (max_distance>=distanceBetweenPlanets){
+			let timeTaken = distanceBetweenPlanets/speed;
+			this.setState = ({
+				calculatedTime: timeTaken
+			})
+		}
 	}
 	render() {
 		return (<div>
-			<select id="planets" onChange={() => this.selectPlanet()}>
+			<select id="planets" onClick={this.selectPlanet}>
 				{this.state.planets.map( planetName => 
 					<option key={planetName.planet}>{planetName.planet}</option>
 				)}
 			</select>
-			<select id="rockets">
+			&nbsp;
+			<select id="rockets" onClick={this.selectRocket}>
 				{this.state.vehicles.map(rocketName => 
 					<option key={rocketName}>{rocketName}</option>)}
 			</select>
-		 </div>)
+			<div>
+				Planet:  {this.state.selectedPlanet} <br/>
+				Rocket: {this.state.selectedRocket} <br/>
+				Time Taken: {this.state.calculatedTime}
+			</div>
+		</div>)
 	}
 }
