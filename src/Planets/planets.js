@@ -58,29 +58,36 @@ export default class Planets extends Component{
 	}
 	selectPlanet = (event) => {
 		this.setState({selectedPlanet: event.target.value});
-		this.calculateTime();
+		this.calculateTime(this.state.selectedPlanet, this.state.selectedRocket, this.state.calculatedTime);
 	}
 
 	selectRocket = (event) => {
 		this.setState({selectedRocket: event.target.value});
-		this.calculateTime();
+		this.calculateTime(this.state.selectedPlanet, this.state.selectedRocket, this.state.calculatedTime);
 	}
 
-	calculateTime = () => {
-		console.log('called')
-		let planet = this.state.selectedPlanet;
-		let rocket = this.state.selectedRocket;
-		let distanceBetweenPlanets = this.state.planets.map( planetName => {if(planetName === planet){
-					return planetName.distance;
-				}})
+	calculateTime = (planet, rocket, distance) => {
+		//console.log('called')
+		this.state.planets.map( planetName => {
+			// console.log(planetName.planet)
+			// console.log(planet)
+			if(planetName.planet === planet){
+				distance = planetName.distance;
+			}
+		})
+		distance = Number.parseInt(distance);
+		console.log('distance', distance)
 		let max_distance = this.state.vehicles.map( rocketName => {if(rocketName === rocket){
 					return rocketName.max_distance;
 				}})
-		let speed = this.state.vehicles.map( rocketName => {if(rocketName === rocket){
-					return rocketName.speed;
+		let speed;
+		this.state.vehicles.map( rocketName => {if(rocketName === rocket){
+					speed = rocketName.speed;
 				}})
-		if (max_distance>=distanceBetweenPlanets){
-			let timeTaken = distanceBetweenPlanets/speed;
+		speed = Number.parseInt(speed);
+		console.log("speed", speed)
+		if (max_distance>=distance){
+			let timeTaken = distance/speed;
 			this.setState = ({
 				calculatedTime: timeTaken
 			})
@@ -88,13 +95,13 @@ export default class Planets extends Component{
 	}
 	render() {
 		return (<div>
-			<select id="planets" onClick={this.selectPlanet}>
+			<select id="planets" onChange={this.selectPlanet}>
 				{this.state.planets.map( planetName => 
 					<option key={planetName.planet}>{planetName.planet}</option>
 				)}
 			</select>
 			&nbsp;
-			<select id="rockets" onClick={this.selectRocket}>
+			<select id="rockets" onChange={this.selectRocket}>
 				{this.state.vehicles.map(rocketName => 
 					<option key={rocketName}>{rocketName}</option>)}
 			</select>
