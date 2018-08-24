@@ -30,25 +30,29 @@ export default class Planets extends Component{
 				}
 			],
 			vehicles: [
-				'Space Pod': {
-					'units': 2,
-					'max_distance': '200 megamiles',
-					'speed': '2 megamiles/hour'
+				{
+					rocket: 'Space Pod',
+					units: 2,
+					max_distance: '200 megamiles',
+					speed: '2 megamiles/hour'
 				}, 
-				'Space Rocket': {
-					'units': 1,
-					'max_distance': '300 megamiles',
-					'speed': '4 megamiles/hour'
+				{
+					rocket: 'Space Rocket',
+					units: 1,
+					max_distance: '300 megamiles',
+					speed: '4 megamiles/hour'
 				},
-				'Space Shuttle': {
-					'units': 1,
-					'max_distance': '400 megamiles',
-					'speed': '5 megamiles/hour'
+				{
+					rocket: 'Space Shuttle',
+					units: 1,
+					max_distance: '400 megamiles',
+					speed: '5 megamiles/hour'
 				},
-				'Space Ship': {
-					'units': 2,
-					'max_distance': '600 megamiles',
-					'speed': '10 megamiles/hour'
+				{
+					rocket: 'Space Ship',
+					units: 2,
+					max_distance: '600 megamiles',
+					speed: '10 megamiles/hour'
 				}
 			],
 			selectedPlanet:'DonLon',
@@ -56,54 +60,57 @@ export default class Planets extends Component{
 			calculatedTime: 0
 		}
 	}
-	selectPlanet = (event) => {
-		this.setState({selectedPlanet: event.target.value});
-		this.calculateTime(this.state.selectedPlanet, this.state.selectedRocket, this.state.calculatedTime);
+	// selectPlanet = (event) => {
+	// 	this.setState({selectedPlanet: event.target.value}, this.calculateTime());
+	// }
+
+	// selectRocket = (event) => {
+	// 	this.setState({selectedRocket: event.target.value}, this.calculateTime());
+	// }
+
+	componentDidMount(){
+		this.calculateTime();
 	}
 
-	selectRocket = (event) => {
-		this.setState({selectedRocket: event.target.value});
-		this.calculateTime(this.state.selectedPlanet, this.state.selectedRocket, this.state.calculatedTime);
-	}
-
-	calculateTime = (planet, rocket, distance) => {
-		//console.log('called')
+	calculateTime = () => {
+		let planet = this.state.selectedPlanet;
+		let rocket = this.state.selectedRocket;
+		let distance = this.state.calculatedTime;
 		this.state.planets.map( planetName => {
-			// console.log(planetName.planet)
-			// console.log(planet)
 			if(planetName.planet === planet){
-				distance = planetName.distance;
+				distance = parseInt(planetName.distance);
 			}
 		})
-		distance = Number.parseInt(distance);
-		console.log('distance', distance)
-		let max_distance = this.state.vehicles.map( rocketName => {if(rocketName === rocket){
-					return rocketName.max_distance;
-				}})
+		let max_distance;
+		this.state.vehicles.map( rocketName => {
+			if(rocketName.rocket === rocket){
+				max_distance = parseInt(rocketName.max_distance);
+			}
+		})
 		let speed;
-		this.state.vehicles.map( rocketName => {if(rocketName === rocket){
-					speed = rocketName.speed;
-				}})
-		speed = Number.parseInt(speed);
-		console.log("speed", speed)
-		if (max_distance>=distance){
-			let timeTaken = distance/speed;
-			this.setState = ({
-				calculatedTime: timeTaken
+		this.state.vehicles.map( rocketName => {
+			if(rocketName.rocket === rocket){
+				speed = parseInt(rocketName.speed);
+			}
+		})
+		if (max_distance >= distance){
+			this.setState({
+				calculatedTime: distance/speed
 			})
 		}
 	}
 	render() {
 		return (<div>
-			<select id="planets" onChange={this.selectPlanet}>
-				{this.state.planets.map( planetName => 
+			<select id="planets" onChange={(event) => this.setState({selectedPlanet: event.target.value}, this.calculateTime())}>
+				{ this.state.planets.map( planetName => 
 					<option key={planetName.planet}>{planetName.planet}</option>
 				)}
 			</select>
 			&nbsp;
-			<select id="rockets" onChange={this.selectRocket}>
-				{this.state.vehicles.map(rocketName => 
-					<option key={rocketName}>{rocketName}</option>)}
+			<select id="rockets" onChange={(event) => this.setState({selectedRocket: event.target.value}, this.calculateTime())}>
+				{ this.state.vehicles.map( (rocketName, id) => 
+					<option key= {id}> {rocketName.rocket} </option>
+				)}
 			</select>
 			<div>
 				Planet:  {this.state.selectedPlanet} <br/>
