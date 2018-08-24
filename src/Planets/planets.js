@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import DisplayData from './displayData';
+
 export default class Planets extends Component{
 	constructor(props) {
 		super();
@@ -55,18 +57,20 @@ export default class Planets extends Component{
 					speed: '10 megamiles/hour'
 				}
 			],
-			selectedPlanet:'DonLon',
-			selectedRocket:'Space Pod',
-			calculatedTime: 0
+			selectedPlanet:[],
+			selectedRocket:[],
+			calculatedTime:[]
 		}
 	}
-	// selectPlanet = (event) => {
-	// 	this.setState({selectedPlanet: event.target.value}, this.calculateTime());
-	// }
 
-	// selectRocket = (event) => {
-	// 	this.setState({selectedRocket: event.target.value}, this.calculateTime());
-	// }
+	selectPlanet = (event) => {
+		this.setState({selectedPlanet: [...this.state.selectedPlanet, event.target.value]}, this.calculateTime());
+	}
+
+	selectRocket = (event) => {
+		var selectedRocket = this.state.selectedRocket;
+		this.setState({selectedRocket: [event.target.value]}, this.calculateTime());
+	}
 
 	componentDidMount(){
 		this.calculateTime();
@@ -95,28 +99,24 @@ export default class Planets extends Component{
 		})
 		if (max_distance >= distance){
 			this.setState({
-				calculatedTime: distance/speed
+				calculatedTime: [...this.state.calculatedTime, distance/speed]
 			})
 		}
 	}
+
 	render() {
-		return (<div>
-			<select id="planets" onChange={(event) => this.setState({selectedPlanet: event.target.value}, this.calculateTime())}>
-				{ this.state.planets.map( planetName => 
-					<option key={planetName.planet}>{planetName.planet}</option>
-				)}
-			</select>
-			&nbsp;
-			<select id="rockets" onChange={(event) => this.setState({selectedRocket: event.target.value}, this.calculateTime())}>
-				{ this.state.vehicles.map( (rocketName, id) => 
-					<option key= {id}> {rocketName.rocket} </option>
-				)}
-			</select>
+		return (<div> 
+			<DisplayData 
+				selectPlanet={this.selectPlanet} 
+				selectRocket={this.selectRocket} 
+				planets={this.state.planets}
+				vehicles={this.state.vehicles}
+			/>
 			<div>
 				Planet:  {this.state.selectedPlanet} <br/>
 				Rocket: {this.state.selectedRocket} <br/>
 				Time Taken: {this.state.calculatedTime}
-			</div>
-		</div>)
+			</div>	
+			</div>)
 	}
 }
